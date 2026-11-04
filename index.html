@@ -146,6 +146,7 @@ p { margin: 0; }
 .avatar { width: 104px; height: 104px; margin-bottom: 12px; display: grid; place-items: center; overflow: hidden; background: var(--sun-soft); color: var(--ink); font: 700 1.6rem/1 var(--display);
   clip-path: polygon(33% 0, 67% 0, 67% 17%, 83% 17%, 83% 33%, 100% 33%, 100% 67%, 83% 67%, 83% 83%, 67% 83%, 67% 100%, 33% 100%, 33% 83%, 17% 83%, 17% 67%, 0 67%, 0 33%, 17% 33%, 17% 17%, 33% 17%); }
 .avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatar.has-photo { width: 116px; height: 116px; clip-path: none; border-radius: 50%; border: 3px solid var(--sun); box-shadow: 0 0 0 4px var(--sun-soft); }
 .member .flags { position: absolute; top: 18px; right: 14px; display: flex; gap: 4px; }
 .member .flags svg { width: 24px; height: 16px; display: block; border-radius: 2px; box-shadow: 0 0 0 1px var(--line); }
 .member .role { font: 600 .74rem/1.3 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--red); }
@@ -339,11 +340,11 @@ const SITE = {
   // Executive board: photo is optional (put files in photos/). Without one, initials are shown.
   // flags: country codes shown in the card corner. Available: "pe" (Peru), "mx" (Mexico); add more in FLAGS below.
   board: [
-    { role: "Co-President", name: "Allison Dominguez", meta: "Nanoengineering, Senior", flags: ["pe"], photo: "" },
-    { role: "Co-President", name: "Belen Olascuaga Viera", meta: "Business Economics, Senior", flags: ["pe"], photo: "" },
-    { role: "Marketing Chair", name: "Leila Altamirano", meta: "Sociology, Sophomore", flags: ["pe"], photo: "" },
-    { role: "Treasurer", name: "Maria Suarez", meta: "Business Economics, Senior", flags: ["pe", "mx"], photo: "" },
-    { role: "Events Chair", name: "Kiara Aguirre", meta: "Cognitive Science, Sophomore", flags: ["pe"], photo: "" },
+    { role: "Co-President", name: "Allison Dominguez", meta: "Nanoengineering, Senior", flags: ["pe"], photo: "photos/board-allison.jpg" },
+    { role: "Co-President", name: "Belen Olascuaga Viera", meta: "Business Economics, Senior", flags: ["pe"], photo: "photos/board-belen.jpg" },
+    { role: "Marketing Chair", name: "Leila Altamirano", meta: "Sociology, Sophomore", flags: ["pe"], photo: "photos/board-leila.jpg" },
+    { role: "Treasurer", name: "Maria Suarez", meta: "Business Economics, Senior", flags: ["pe", "mx"], photo: "photos/board-maria.jpg" },
+    { role: "Events Chair", name: "Kiara Aguirre", meta: "Cognitive Science, Sophomore", flags: ["pe"], photo: "photos/board-kiara.jpg" },
     { role: "Community Chair", name: "Eduardo Rosales", meta: "Chemistry, Senior", flags: ["mx"], photo: "" },
   ],
 
@@ -383,7 +384,7 @@ SITE.board.forEach(m => {
   card.className = 'member';
   const av = document.createElement('div');
   av.className = 'avatar';
-  if (m.photo) { const i = document.createElement('img'); i.src = m.photo; i.alt = m.name; av.append(i); }
+  if (m.photo) { av.classList.add('has-photo'); const i = document.createElement('img'); i.src = m.photo; i.alt = m.name; av.append(i); }
   else if (!m.name.startsWith('[')) av.textContent = (m.name.replace(/[^A-Za-zÀ-ÿ ]/g, '').trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2) || '?').toUpperCase();
   const role = document.createElement('span'); role.className = 'role'; role.textContent = m.role;
   const name = document.createElement('span'); name.className = 'name'; name.textContent = m.name;
