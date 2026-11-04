@@ -349,7 +349,7 @@ const SITE = {
     { src: "photos/tabling-i-house.jpg", caption: "Tabling at I-House, representing Peru" },
     { src: ["photos/picnic.jpg", "photos/picnic-2.jpg"], caption: "Spring quarter Picnic" },
     { src: "photos/tacos-night.jpg", caption: "Carne asada night" },
-    { src: "photos/tequenos-night.jpg", caption: "Tequeños night" },
+    { src: "photos/tequenos-night.jpg", caption: "Tequeños night", position: "0% 50%" },
     { src: "photos/exec-meeting.jpg", caption: "Executive board meeting", wide: true },
   ],
 };
@@ -441,6 +441,7 @@ if (SITE.photos.length) {
       b.setAttribute('aria-label', 'Open photo ' + (srcs.length > 1 ? (i + 1) + ' of ' + srcs.length + ': ' : ': ') + (p.caption || ''));
       const img = document.createElement('img');
       img.src = src; img.alt = p.caption || ''; img.loading = 'lazy';
+      if (p.position) img.style.objectPosition = p.position;
       b.append(img); track.append(b);
       b.addEventListener('click', () => openLightbox({ src, caption: p.caption }));
     });
