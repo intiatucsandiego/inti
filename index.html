@@ -112,8 +112,10 @@ p { margin: 0; }
 .gallery button { all: unset; display: block; width: 100%; height: 100%; cursor: zoom-in; }
 .gallery button:hover img { transform: scale(1.04); }
 .gallery figcaption { position: absolute; left: 10px; bottom: 10px; right: 10px; padding: 6px 10px; border-radius: 8px; background: color-mix(in srgb, var(--bg) 85%, transparent); color: var(--ink); font-size: .85rem; font-weight: 500; }
-.gallery.has-photos { grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); }
+.gallery.has-photos { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 760px) { .gallery.has-photos { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .gallery.has-photos figure, .gallery.has-photos figure:nth-child(5n+1) { grid-row: auto; aspect-ratio: 4 / 5; }
+.gallery.has-photos figure:first-child { grid-row: span 2; aspect-ratio: auto; }
 .ph-tile { width: 100%; height: 100%; display: grid; place-items: center; color: var(--muted); font-size: .9rem;
   background: radial-gradient(circle at 30% 30%, var(--sun-soft), transparent 60%), var(--surface); }
 .lightbox { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 24px; background: rgba(20,12,10,.9); }
@@ -122,6 +124,9 @@ p { margin: 0; }
 .lightbox button { position: absolute; top: calc(16px + env(safe-area-inset-top, 0px)); right: 16px; background: #f3f1ea; color: #1a1210; border: 0; border-radius: 999px; padding: 8px 14px; font: 600 .9rem var(--body); cursor: pointer; }
 
 /* Board */
+.board-photo { margin: 0 0 24px; border-radius: var(--radius); overflow: hidden; aspect-ratio: 16 / 7; max-width: 100%; background: var(--surface); }
+.board-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 45%; }
+@media (max-width: 560px) { .board-photo { aspect-ratio: 4 / 3; } }
 .board { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
 @media (max-width: 760px) { .board { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 440px) { .board { grid-template-columns: 1fr; } }
@@ -212,6 +217,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
         <h2>Meet the board</h2>
         <p>The students who keep Inti running. Reach out to any of us with questions or ideas.</p>
       </div>
+      <figure class="board-photo" id="board-photo" hidden><img alt="The Inti executive board at a meeting"></figure>
       <div class="board" id="board-grid"></div>
     </div>
   </section>
@@ -316,6 +322,9 @@ const SITE = {
   instagramHandle: "@YOUR_HANDLE",
   discord: "https://discord.gg/YOUR_INVITE",
 
+  // Group photo shown above the board cards. Leave "" to hide it.
+  boardPhoto: "photos/exec-meeting.jpg",
+
   // Executive board: photo is optional (put files in photos/). Without one, initials are shown.
   // flags: country codes shown in the card corner. Available: "pe" (Peru), "mx" (Mexico); add more in FLAGS below.
   board: [
@@ -329,8 +338,9 @@ const SITE = {
 
   // Photos: put image files in the photos/ folder and list them here.
   photos: [
-    { src: "photos/picnic.jpg", caption: "Getting to know each other picnic" },
     { src: "photos/tabling-i-house.jpg", caption: "Tabling at I-House, representing Peru" },
+    { src: "photos/picnic.jpg", caption: "Getting to know each other picnic" },
+    { src: "photos/picnic-2.jpg", caption: "Getting to know each other picnic" },
     { src: "photos/tacos-night.jpg", caption: "Carne asada night" },
     { src: "photos/tequenos-night.jpg", caption: "Tequeños night" },
   ],
@@ -352,6 +362,10 @@ const FLAGS = {
   pe: { name: 'Peru', svg: '<rect width="3" height="2" fill="#D91023"/><rect x="1" width="1" height="2" fill="#fff"/>' },
   mx: { name: 'Mexico', svg: '<rect width="3" height="2" fill="#CE1126"/><rect width="2" height="2" fill="#fff"/><rect width="1" height="2" fill="#006847"/><circle cx="1.5" cy="1" r=".28" fill="#8C5A2B"/>' },
 };
+if (SITE.boardPhoto) {
+  const bp = document.getElementById('board-photo');
+  bp.querySelector('img').src = SITE.boardPhoto; bp.hidden = false;
+}
 const board = document.getElementById('board-grid');
 SITE.board.forEach(m => {
   const card = document.createElement('article');
