@@ -167,6 +167,8 @@ p { margin: 0; }
 .community h2 { max-width: 18ch; }
 .community .eyebrow { color: var(--on-red); opacity: .85; }
 .community .btn-ghost { border-color: var(--on-red); color: var(--on-red); }
+.community .btn-sun { background: var(--sun); color: var(--ink); }
+.community .btn-sun:hover { background: var(--sun-soft); }
 .community .btn-ghost:hover { background: var(--on-red); color: var(--red); }
 .social { display: flex; flex-wrap: wrap; gap: 12px; }
 
@@ -257,31 +259,15 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
     </div>
   </section>
 
-  <section class="section" id="join">
-    <div class="wrap">
-      <div class="section-head">
-        <span class="eyebrow">Get involved</span>
-        <h2>Join Inti</h2>
-        <p>Tell us a bit about yourself so we can keep you posted and reach out.</p>
-      </div>
-      <div class="join-grid">
-        <div class="join-card">
-          <h3>Interest form</h3>
-          <p>Want to become a member, volunteer, or join the board? Start here.</p>
-          <div id="interest-slot"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <div class="fret" aria-hidden="true"></div>
-  <section class="section community">
+  <section class="section community" id="join">
     <div class="wrap">
       <div>
-        <span class="eyebrow">Community</span>
-        <h2>Find us between events</h2>
+        <span class="eyebrow">Get involved</span>
+        <h2>Join the Inti community</h2>
       </div>
       <div class="social">
+        <a class="btn btn-sun" id="interest-link" href="#" target="_blank" rel="noopener">Fill out our interest form</a>
         <a class="btn btn-ghost" id="instagram-link" href="#" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0 8.2a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4ZM17.3 5.5a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4ZM12 2c-2.7 0-3 0-4.1.1C4.3 2.3 2.3 4.3 2.1 7.9 2 9 2 9.3 2 12s0 3 .1 4.1c.2 3.6 2.2 5.6 5.8 5.8 1.1.1 1.4.1 4.1.1s3 0 4.1-.1c3.6-.2 5.6-2.2 5.8-5.8.1-1.1.1-1.4.1-4.1s0-3-.1-4.1c-.2-3.6-2.2-5.6-5.8-5.8C15 2 14.7 2 12 2Zm0 1.8c2.7 0 3 0 4 .1 2.7.1 4 1.4 4.1 4.1.1 1 .1 1.3.1 4s0 3-.1 4c-.1 2.7-1.4 4-4.1 4.1-1 .1-1.3.1-4 .1s-3 0-4-.1c-2.7-.1-4-1.4-4.1-4.1-.1-1-.1-1.3-.1-4s0-3 .1-4c.1-2.7 1.4-4 4.1-4.1 1-.1 1.3-.1 4-.1Z"/></svg>
           <span id="instagram-label">Instagram</span>
@@ -323,7 +309,7 @@ const SITE = {
   calendarLink: "https://calendar.google.com/calendar/u/0?cid=Y19mNmRkMDFlMmUxN2ZjZThhMjQ1MjRiNzg2MWVjN2UyMjA1YzEyZWQ5ZGE1ZGY5YTQzNjFmMjA4NTVjMDIzOWM3QGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20",
 
   // Google Forms: open the form > Send > "<>" (embed) tab > copy the src="..." URL.
-  interestForm: "",
+  interestForm: "https://forms.gle/tyiUJGnVKnKJE5oT7",
 
   instagram: "https://www.instagram.com/inti.at.ucsandiego/",
   instagramHandle: "@inti.at.ucsandiego",
@@ -421,12 +407,7 @@ if (SITE.calendarId) {
   document.getElementById('calendar-actions').append(a);
 }
 
-[['interest-slot', SITE.interestForm, 'Interest form']]
-  .forEach(([id, src, label]) => {
-    document.getElementById(id).append(src
-      ? iframe(src, 'form-embed', label)
-      : placeholder(label, 'Paste your Google Form embed URL into index.html.'));
-  });
+document.getElementById('interest-link').href = SITE.interestForm;
 
 const grid = document.getElementById('gallery-grid');
 if (SITE.photos.length) {
