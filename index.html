@@ -115,7 +115,18 @@ p { margin: 0; }
 .gallery.has-photos { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 @media (max-width: 760px) { .gallery.has-photos { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .gallery.has-photos figure, .gallery.has-photos figure:nth-child(5n+1) { grid-row: auto; aspect-ratio: 4 / 5; }
+.gallery.has-photos { grid-auto-flow: dense; }
 .gallery.has-photos figure:first-child { grid-row: span 2; aspect-ratio: auto; }
+.gallery.has-photos figure.carousel { grid-column: span 2; aspect-ratio: 8 / 5; }
+.gallery .track { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+.gallery .track::-webkit-scrollbar { display: none; }
+.gallery .track button { flex: 0 0 100%; scroll-snap-align: start; }
+.gallery .arrow { all: unset; position: absolute; top: 50%; transform: translateY(-50%); width: 38px; height: 38px; border-radius: 999px; display: grid; place-items: center; background: color-mix(in srgb, var(--bg) 88%, transparent); color: var(--ink); font-size: 1.6rem; line-height: 1; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+.gallery .arrow.prev { left: 10px; } .gallery .arrow.next { right: 10px; }
+.gallery .arrow:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+.gallery .dots { position: absolute; top: 12px; left: 0; right: 0; display: flex; justify-content: center; gap: 6px; pointer-events: none; }
+.gallery .dots span { width: 8px; height: 8px; border-radius: 999px; background: rgba(255,255,255,.6); box-shadow: 0 0 2px rgba(0,0,0,.4); }
+.gallery .dots span.on { background: var(--sun); }
 .ph-tile { width: 100%; height: 100%; display: grid; place-items: center; color: var(--muted); font-size: .9rem;
   background: radial-gradient(circle at 30% 30%, var(--sun-soft), transparent 60%), var(--surface); }
 .lightbox { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 24px; background: rgba(20,12,10,.9); }
@@ -337,10 +348,10 @@ const SITE = {
   ],
 
   // Photos: put image files in the photos/ folder and list them here.
+  // For several photos from one event, give src a list: it becomes a swipeable carousel.
   photos: [
     { src: "photos/tabling-i-house.jpg", caption: "Tabling at I-House, representing Peru" },
-    { src: "photos/picnic.jpg", caption: "Getting to know each other picnic" },
-    { src: "photos/picnic-2.jpg", caption: "Getting to know each other picnic" },
+    { src: ["photos/picnic.jpg", "photos/picnic-2.jpg"], caption: "Getting to know each other picnic" },
     { src: "photos/tacos-night.jpg", caption: "Carne asada night" },
     { src: "photos/tequenos-night.jpg", caption: "Tequeños night" },
   ],
@@ -424,13 +435,36 @@ if (SITE.photos.length) {
   grid.classList.add('has-photos');
   SITE.photos.forEach(p => {
     const fig = document.createElement('figure');
-    const b = document.createElement('button');
-    b.setAttribute('aria-label', 'Open photo: ' + (p.caption || ''));
-    const img = document.createElement('img');
-    img.src = p.src; img.alt = p.caption || ''; img.loading = 'lazy';
-    b.append(img); fig.append(b);
+    const srcs = Array.isArray(p.src) ? p.src : [p.src];
+    const track = document.createElement('div'); track.className = 'track';
+    srcs.forEach((src, i) => {
+      const b = document.createElement('button');
+      b.setAttribute('aria-label', 'Open photo ' + (srcs.length > 1 ? (i + 1) + ' of ' + srcs.length + ': ' : ': ') + (p.caption || ''));
+      const img = document.createElement('img');
+      img.src = src; img.alt = p.caption || ''; img.loading = 'lazy';
+      b.append(img); track.append(b);
+      b.addEventListener('click', () => openLightbox({ src, caption: p.caption }));
+    });
+    fig.append(track);
+    if (srcs.length > 1) {
+      fig.classList.add('carousel');
+      const dots = document.createElement('div'); dots.className = 'dots';
+      srcs.forEach(() => dots.append(document.createElement('span')));
+      const cur = () => Math.round(track.scrollLeft / track.clientWidth);
+      const go = i => track.scrollTo({ left: ((i + srcs.length) % srcs.length) * track.clientWidth, behavior: 'smooth' });
+      const mark = () => [...dots.children].forEach((d, i) => d.classList.toggle('on', i === cur()));
+      ['prev', 'next'].forEach(dir => {
+        const a = document.createElement('button');
+        a.type = 'button'; a.className = 'arrow ' + dir;
+        a.setAttribute('aria-label', dir === 'prev' ? 'Previous photo' : 'Next photo');
+        a.textContent = dir === 'prev' ? '‹' : '›';
+        a.addEventListener('click', () => go(cur() + (dir === 'prev' ? -1 : 1)));
+        fig.append(a);
+      });
+      track.addEventListener('scroll', mark, { passive: true });
+      fig.append(dots); mark();
+    }
     if (p.caption) { const c = document.createElement('figcaption'); c.textContent = p.caption; fig.append(c); }
-    b.addEventListener('click', () => openLightbox(p));
     grid.append(fig);
   });
 } else {
